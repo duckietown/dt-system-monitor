@@ -13,11 +13,7 @@ FROM duckietown/${BASE_IMAGE}:${BASE_TAG}
 
 # check REPO_NAME
 ARG REPO_NAME
-RUN bash -c \
-  'if [ "${REPO_NAME}" = "<REPO_NAME_HERE>" ]; then \
-    >&2 echo "ERROR: You need to change the value of REPO_NAME inside Dockerfile."; \
-    exit 1; \
-  fi'
+RUN /utils/build_check ${REPO_NAME}
 
 # define repository path
 ARG REPO_PATH="${SOURCE_DIR}/${REPO_NAME}"
