@@ -24,7 +24,8 @@ from .constants import \
     JOB_FETCH_DEVICE_HEALTH, \
     JOB_PUSH_TO_SERVER, \
     JOB_FETCH_ENDPOINT_INFO, \
-    LOG_VERSION
+    LOG_VERSION, \
+    LOG_GROUP
 
 
 class SystemMonitor(DTProcess):
@@ -36,7 +37,11 @@ class SystemMonitor(DTProcess):
         self._start_time_iso = _iso_now()
         self._lock = threading.Semaphore(1)
         self._log = {
-            'time': self._start_time_iso
+            'time': self._start_time_iso,
+            'version': LOG_VERSION,
+            'group': LOG_GROUP,
+            'type': self.args.type.lower(),
+            'target': self.get_target_name()
         }
         self._log_size = sys.getsizeof(self._log)
         # ---
@@ -150,15 +155,19 @@ Log ID: {key:s}
         return log
 
     def get_log_key(self):
+        return 'v{}__{}__{}__{}__{:d}'.format(
+            LOG_VERSION,
+            LOG_GROUP,
+            self.args.type.lower(),
+            self.get_target_name(),
+            int(self._start_time)
+        )
+
+    def get_target_name(self):
         target = socket.gethostname() if self.args.target.startswith('unix:') else self.args.target
         target, *_ = target.split(':')
         target = target.rstrip('.local')
-        return 'v{}__{}__{}__{:d}'.format(
-            LOG_VERSION,
-            self.args.type.lower(),
-            target.lower(),
-            int(self._start_time)
-        )
+        return target.lower()
 
     def _exception_handler(self, exception_type, exception, tback):
         self.pool.stats.increase('tasks_failed')
