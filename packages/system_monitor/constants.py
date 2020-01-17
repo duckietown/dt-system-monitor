@@ -1,0 +1,43 @@
+import multiprocessing
+
+# App
+APP_NAME = 'system-monitor'
+WORKERS_NUM = multiprocessing.cpu_count()
+WORKER_HEARTBEAT_HZ = 2
+APP_HEARTBEAT_HZ = 5
+
+# Jobs
+JOB_FETCH_CONTAINER_LIST = True
+JOB_FETCH_CONTAINER_STATS = False
+JOB_FETCH_CONTAINER_TOP = True
+JOB_FETCH_CONTAINER_CONFIG = True
+JOB_FETCH_DEVICE_HEALTH = True
+JOB_PUSH_TO_SERVER = True
+
+# Docker
+DEFAULT_DOCKER_TCP_PORT = 2375
+
+# Job: Device Health
+DEFAULT_DEVICE_HEALTH_API_PORT = 8085
+FETCH_NEW_DEVICE_STATS_EVERY_S = 10
+
+# Job: Containers List
+FETCH_NEW_CONTAINERS_EVERY_S = 10
+
+# Job: Container Stats
+FETCH_NEW_CONTAINER_STATS_EVERY_S = 10
+
+# Job: Process Stats
+FETCH_NEW_PROCESS_STATS_EVERY_S = 5
+
+# Job: Printer
+VERBOSE_PRINT_STATUS_EVERY_S = 2
+
+# Job: Publisher
+LOG_API_URL = "http://dashboard.duckietown.org/web-api/1.0/data/set/json"
+LOG_API_DATABASE = "distro_comparison_1"
+LOG_API_APP_ID = "101741598378777739147_distro_comparison_1"
+LOG_API_APP_SECRET = "JBsYceffKDt5F17kaBmRafj7LZuXTGJt81ha5ngGQACmrzws"
+LOG_API_RETRY_EVERY_S = 5
+LOG_API_RETRY_N_TIMES = 3
+LOG_API_REQUEST_TIMEOUT_S = 20
