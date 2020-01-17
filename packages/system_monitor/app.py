@@ -13,7 +13,7 @@ from dt_class_utils import AppStatus
 from typing import Iterable, Union, Dict
 
 from .pool import Pool
-from .jobs import PrinterJob, ContainerListJob, DeviceHealthJob, PublisherJob
+from .jobs import PrinterJob, ContainerListJob, DeviceHealthJob, PublisherJob, EndpointInfoJob
 from .constants import \
     APP_NAME, \
     WORKERS_NUM, \
@@ -21,7 +21,8 @@ from .constants import \
     DEFAULT_DOCKER_TCP_PORT, \
     JOB_FETCH_CONTAINER_LIST, \
     JOB_FETCH_DEVICE_HEALTH, \
-    JOB_PUSH_TO_SERVER
+    JOB_PUSH_TO_SERVER, \
+    JOB_FETCH_ENDPOINT_INFO
 
 
 class SystemMonitor(DTProcess):
@@ -62,6 +63,9 @@ Log ID: {key:s}
             self.pool.enqueue(PrinterJob(self))
         # initialize docker client
         client = docker.DockerClient(base_url=_base_url(self.args))
+        # create endpoint info job
+        if JOB_FETCH_ENDPOINT_INFO:
+            self.pool.enqueue(EndpointInfoJob(self, client))
         # create container updater job
         if JOB_FETCH_CONTAINER_LIST:
             self.pool.enqueue(ContainerListJob(self, client))

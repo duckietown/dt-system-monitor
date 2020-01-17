@@ -12,6 +12,7 @@ JOB_FETCH_CONTAINER_STATS = False
 JOB_FETCH_CONTAINER_TOP = True
 JOB_FETCH_CONTAINER_CONFIG = True
 JOB_FETCH_DEVICE_HEALTH = True
+JOB_FETCH_ENDPOINT_INFO = True
 JOB_PUSH_TO_SERVER = True
 
 # Docker
@@ -34,10 +35,10 @@ FETCH_NEW_PROCESS_STATS_EVERY_S = 5
 VERBOSE_PRINT_STATUS_EVERY_S = 2
 
 # Job: Publisher
-LOG_API_URL = "http://dashboard.duckietown.org/web-api/1.0/data/set/json"
+LOG_API_URL = "https://dashboard.duckietown.org/web-api/1.0/data/set/json"
 LOG_API_DATABASE = "distro_comparison_1"
 LOG_API_APP_ID = "101741598378777739147_distro_comparison_1"
-LOG_API_APP_SECRET = "JBsYceffKDt5F17kaBmRafj7LZuXTGJt81ha5ngGQACmrzws"
+LOG_API_APP_SECRET = "PgFrcD6msrenk5VuAJqryMSI58z4OpBuw6LyAIKS0P6aKSvb"
 LOG_API_RETRY_EVERY_S = 5
 LOG_API_RETRY_N_TIMES = 3
 LOG_API_REQUEST_TIMEOUT_S = 20
