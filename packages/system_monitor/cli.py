@@ -1,5 +1,6 @@
 import argparse
 
+from .constants import LOG_API_DEFAULT_DATABASE, LOG_DEFAULT_GROUP, DEFAULT_TARGET
 
 def get_parser():
     parser = argparse.ArgumentParser()
@@ -8,8 +9,27 @@ def get_parser():
                         help="Specify a device type (e.g., duckiebot, watchtower)")
     parser.add_argument('-T',
                         '--target',
-                        default="unix://var/run/docker.sock",
+                        default=DEFAULT_TARGET,
                         help="Specify a Docker endpoint to monitor")
+    parser.add_argument('--app-id',
+                        required=True,
+                        type=str,
+                        help="ID of the API App used to authenticate the push to the server. " +
+                             "Must have access to the 'data/set' API endpoint")
+    parser.add_argument('--app-secret',
+                        required=True,
+                        type=str,
+                        help="Secret of the API App used to authenticate the push to the server")
+    parser.add_argument('-D',
+                        '--database',
+                        default=LOG_API_DEFAULT_DATABASE,
+                        type=str,
+                        help="Name of the logging database. Must be an existing database.")
+    parser.add_argument('-G',
+                        '--group',
+                        default=LOG_DEFAULT_GROUP,
+                        type=str,
+                        help="Name of the logging group within the database")
     parser.add_argument('-F',
                         '--filter',
                         action='append',

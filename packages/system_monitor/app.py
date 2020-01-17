@@ -24,8 +24,7 @@ from .constants import \
     JOB_FETCH_DEVICE_HEALTH, \
     JOB_PUSH_TO_SERVER, \
     JOB_FETCH_ENDPOINT_INFO, \
-    LOG_VERSION, \
-    LOG_GROUP
+    LOG_VERSION
 
 
 class SystemMonitor(DTProcess):
@@ -39,7 +38,7 @@ class SystemMonitor(DTProcess):
         self._log = {
             'time': self._start_time_iso,
             'version': LOG_VERSION,
-            'group': LOG_GROUP,
+            'group': self.args.group,
             'type': self.args.type.lower(),
             'target': self.get_target_name()
         }
@@ -58,10 +57,19 @@ System-Monitor
 -- Configuration --------------------------
 Target: {target:s}
 Target Type: {type:s}
+Target Name: {target_name:s}
+Log Version: {log_version:s}
+Log Database: {database:s}
+Log Group: {group:s}
 Log duration: {duration:d} secs
 Log ID: {key:s}
 -------------------------------------------
-        """.format(**self.args.__dict__, key=self.get_log_key()))
+        """.format(
+            **self.args.__dict__,
+            key=self.get_log_key(),
+            target_name=self.get_target_name(),
+            log_version=str(LOG_VERSION)
+        ))
 
     def start(self):
         self.logger.info('Started logging...')
@@ -157,7 +165,7 @@ Log ID: {key:s}
     def get_log_key(self):
         return 'v{}__{}__{}__{}__{:d}'.format(
             LOG_VERSION,
-            LOG_GROUP,
+            self.args.group,
             self.args.type.lower(),
             self.get_target_name(),
             int(self._start_time)
@@ -209,6 +217,7 @@ def _get_size(obj, seen=None):
     elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
         size += sum([_get_size(i, seen) for i in obj])
     return size
+
 
 def _iso_now():
     return datetime.datetime.utcnow().replace(

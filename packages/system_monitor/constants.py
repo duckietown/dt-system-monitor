@@ -4,6 +4,7 @@ import multiprocessing
 # App
 APP_NAME = 'system-monitor'
 WORKERS_NUM = multiprocessing.cpu_count()
+DEFAULT_TARGET = "unix://var/run/docker.sock"
 WORKER_HEARTBEAT_HZ = 2
 APP_HEARTBEAT_HZ = 5
 LOG_VERSION = 1
@@ -37,11 +38,16 @@ FETCH_NEW_PROCESS_STATS_EVERY_S = 5
 VERBOSE_PRINT_STATUS_EVERY_S = 2
 
 # Job: Publisher
-LOG_API_URL = "https://dashboard.duckietown.org/web-api/1.0/data/set/json"
-LOG_API_DATABASE = os.environ.get('LOG_DATABASE', 'db_log_default')
-LOG_GROUP = os.environ.get('LOG_GROUP', 'default')
-LOG_API_APP_ID = "101741598378777739147_distro_comparison_1"
-LOG_API_APP_SECRET = "PgFrcD6msrenk5VuAJqryMSI58z4OpBuw6LyAIKS0P6aKSvb"
+LOG_API_PROTOCOL = os.environ.get('LOG_API_PROTOCOL', 'https')
+LOG_API_HOSTNAME = os.environ.get('LOG_API_HOSTNAME', 'dashboard.duckietown.org')
+LOG_API_VERSION = os.environ.get('LOG_API_VERSION', '1.0')
+LOG_API_URL = "{:s}://{:s}/web-api/{}/data/set/json".format(
+    LOG_API_PROTOCOL,
+    LOG_API_HOSTNAME,
+    LOG_API_VERSION
+)
+LOG_API_DEFAULT_DATABASE = 'db_log_default'
+LOG_DEFAULT_GROUP = 'default'
 LOG_API_RETRY_EVERY_S = 5
 LOG_API_RETRY_N_TIMES = 3
 LOG_API_REQUEST_TIMEOUT_S = 20

@@ -7,9 +7,6 @@ from typing import Dict
 from .jobs import Job
 from system_monitor.constants import \
     LOG_API_URL, \
-    LOG_API_DATABASE, \
-    LOG_API_APP_ID, \
-    LOG_API_APP_SECRET, \
     LOG_API_RETRY_EVERY_S, \
     LOG_API_RETRY_N_TIMES, \
     LOG_API_REQUEST_TIMEOUT_S
@@ -36,9 +33,9 @@ class PublisherJob(Job):
         try:
             # create request body
             data = {
-                'app_id': LOG_API_APP_ID,
-                'app_secret': LOG_API_APP_SECRET,
-                'database': LOG_API_DATABASE,
+                'app_id': self._app.args.app_id,
+                'app_secret': self._app.args.app_secret,
+                'database': self._app.args.database,
                 'key': self._log_key,
                 'value': json.dumps(self._data)
             }
