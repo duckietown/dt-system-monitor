@@ -11,7 +11,7 @@ ARG BASE_IMAGE=dt-commons
 # define base image
 FROM duckietown/${BASE_IMAGE}:${BASE_TAG}
 
-# check REPO_NAME
+# check build arguments
 ARG REPO_NAME
 RUN /utils/build_check ${REPO_NAME}
 
