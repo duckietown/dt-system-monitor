@@ -5,6 +5,7 @@ import logging
 import traceback
 import threading
 import docker
+import socket
 import datetime
 
 from dt_class_utils import DTProcess
@@ -148,7 +149,7 @@ Log ID: {key:s}
         return log
 
     def get_log_key(self):
-        target = 'localhost' if self.args.target.startswith('unix:') else self.args.target
+        target = socket.gethostname() if self.args.target.startswith('unix:') else self.args.target
         target, *_ = target.split(':')
         target = target.rstrip('.local')
         return '{}__{}__{:d}'.format(self.args.type.lower(), target.lower(), int(self._start_time))
