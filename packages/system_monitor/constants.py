@@ -1,3 +1,4 @@
+import os
 import multiprocessing
 
 # App
@@ -37,7 +38,7 @@ VERBOSE_PRINT_STATUS_EVERY_S = 2
 
 # Job: Publisher
 LOG_API_URL = "https://dashboard.duckietown.org/web-api/1.0/data/set/json"
-LOG_API_DATABASE = "distro_comparison_1"
+LOG_API_DATABASE = os.environ.get('LOG_DATABASE', 'db_log_default')
 LOG_API_APP_ID = "101741598378777739147_distro_comparison_1"
 LOG_API_APP_SECRET = "PgFrcD6msrenk5VuAJqryMSI58z4OpBuw6LyAIKS0P6aKSvb"
 LOG_API_RETRY_EVERY_S = 5
