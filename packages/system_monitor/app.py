@@ -23,7 +23,8 @@ from .constants import \
     JOB_FETCH_CONTAINER_LIST, \
     JOB_FETCH_DEVICE_HEALTH, \
     JOB_PUSH_TO_SERVER, \
-    JOB_FETCH_ENDPOINT_INFO
+    JOB_FETCH_ENDPOINT_INFO, \
+    LOG_VERSION
 
 
 class SystemMonitor(DTProcess):
@@ -152,7 +153,12 @@ Log ID: {key:s}
         target = socket.gethostname() if self.args.target.startswith('unix:') else self.args.target
         target, *_ = target.split(':')
         target = target.rstrip('.local')
-        return '{}__{}__{:d}'.format(self.args.type.lower(), target.lower(), int(self._start_time))
+        return 'v{}__{}__{}__{:d}'.format(
+            LOG_VERSION,
+            self.args.type.lower(),
+            target.lower(),
+            int(self._start_time)
+        )
 
     def _exception_handler(self, exception_type, exception, tback):
         self.pool.stats.increase('tasks_failed')

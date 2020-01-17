@@ -5,6 +5,7 @@ APP_NAME = 'system-monitor'
 WORKERS_NUM = multiprocessing.cpu_count()
 WORKER_HEARTBEAT_HZ = 2
 APP_HEARTBEAT_HZ = 5
+LOG_VERSION = 1
 
 # Jobs
 JOB_FETCH_CONTAINER_LIST = True
