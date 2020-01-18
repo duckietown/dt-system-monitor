@@ -40,7 +40,8 @@ class SystemMonitor(DTProcess):
             'version': LOG_VERSION,
             'group': self.args.group,
             'type': self.args.type.lower(),
-            'target': self.get_target_name()
+            'target': self.get_target_name(),
+            'duration': self.args.duration
         }
         self._log_size = sys.getsizeof(self._log)
         # ---
