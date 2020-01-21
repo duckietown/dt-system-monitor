@@ -14,7 +14,12 @@ from dt_class_utils import AppStatus
 from typing import Iterable, Union, Dict
 
 from .pool import Pool
-from .jobs import PrinterJob, ContainerListJob, DeviceHealthJob, PublisherJob, EndpointInfoJob
+from .jobs import PrinterJob,\
+    ContainerListJob,\
+    DeviceHealthJob,\
+    PublisherJob,\
+    EndpointInfoJob,\
+    DeviceResourcesJob
 from .constants import \
     APP_NAME, \
     WORKERS_NUM, \
@@ -22,6 +27,7 @@ from .constants import \
     DEFAULT_DOCKER_TCP_PORT, \
     JOB_FETCH_CONTAINER_LIST, \
     JOB_FETCH_DEVICE_HEALTH, \
+    JOB_FETCH_DEVICE_RESOURCES_STATS, \
     JOB_PUSH_TO_SERVER, \
     JOB_FETCH_ENDPOINT_INFO, \
     LOG_VERSION
@@ -36,12 +42,15 @@ class SystemMonitor(DTProcess):
         self._start_time_iso = _iso_now()
         self._lock = threading.Semaphore(1)
         self._log = {
-            'time': self._start_time_iso,
-            'version': LOG_VERSION,
-            'group': self.args.group,
-            'type': self.args.type.lower(),
-            'target': self.get_target_name(),
-            'duration': self.args.duration
+            'general': {
+                'time': self._start_time,
+                'time_iso': self._start_time_iso,
+                'version': LOG_VERSION,
+                'group': self.args.group,
+                'type': self.args.type.lower(),
+                'target': self.get_target_name(),
+                'duration': self.args.duration
+            }
         }
         self._log_size = sys.getsizeof(self._log)
         # ---
@@ -88,6 +97,9 @@ Log ID: {key:s}
         # create device health job
         if JOB_FETCH_DEVICE_HEALTH:
             self.pool.enqueue(DeviceHealthJob(self, self.args.target))
+        # create device resources stats job
+        if JOB_FETCH_DEVICE_RESOURCES_STATS:
+            self.pool.enqueue(DeviceResourcesJob(self))
         # start pool
         self.pool.run()
         # spin the app
