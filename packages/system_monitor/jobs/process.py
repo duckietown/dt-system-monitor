@@ -55,4 +55,4 @@ class ProcessStatsJob(Job):
         except APIError:
             return
         # update log
-        self._app.extend_log('process/stats', data)
+        self._app.extend_log('process_stats', data)

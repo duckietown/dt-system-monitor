@@ -63,7 +63,7 @@ class ContainerStatsJob(Job):
         except APIError:
             return
         # update log
-        self._app.extend_log('container/stats', [data])
+        self._app.extend_log('container_stats', [data])
 
     def _calculate_cpu_percent(self, stats):
         cpu_percent = 0.0
@@ -135,7 +135,7 @@ class ContainerConfigJob(Job):
             config = self._client.api.inspect_container(self._container_id)
             # update log
             self._app.extend_log(
-                'container/config',
+                'container_config',
                 {self._container_id: config}
             )
             # once it succeded, we no longer need to perform this job again
