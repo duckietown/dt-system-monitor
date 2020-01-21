@@ -40,6 +40,8 @@ class ProcessStatsJob(Job):
             stats = self._container.top(
                 ps_args='-o ppid,pid,pcpu,thcount,cputime,pmem,size,cmd'
             )
+            if not stats['Processes'] or not stats['Titles']:
+                return
             for process in stats['Processes']:
                 # fix size KB -> B
                 process[-2] = int(process[-2]) / 1000
