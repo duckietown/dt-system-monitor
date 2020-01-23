@@ -60,6 +60,7 @@ class ContainerStatsJob(Job):
             data['io_r'], data['io_w'] = self._calculate_blkio_bytes(stats)
             data['mem'] = self._calculate_mem_bytes(stats)
             data['pmem'] = self._calculate_mem_perc(stats)
+            data['network'] = self._calculate_network_bytes(stats)
         except APIError:
             return
         # update log
@@ -102,6 +103,15 @@ class ContainerStatsJob(Job):
             ))
         finally:
             return r, w
+
+    def _calculate_network_bytes(self, stats):
+        if 'networks' not in stats:
+            return {}
+        net_stats = {iface: {'rx': 0.0, 'tx': 0.0} for iface in stats['networks'].keys()}
+        for iface, iface_stats in stats['networks'].items():
+            net_stats[iface]['rx'] += iface_stats['rx_bytes']
+            net_stats[iface]['tx'] += iface_stats['tx_bytes']
+        return net_stats
 
     def _calculate_mem_bytes(self, stats):
         mem_bytes = 0.0
