@@ -34,7 +34,6 @@ class ContainerStatsJob(Job):
         self._container = container
         self._previous_cpu = 0.0
         self._previous_system = 0.0
-        self._stream = None
 
     def run(self):
         data = {
@@ -51,10 +50,8 @@ class ContainerStatsJob(Job):
             self.terminate()
         # try to get a new reading
         try:
-            if not self._stream:
-                self._stream = self._container.stats(decode=True, stream=True)
             # get another reading
-            stats = next(self._stream)
+            stats = self._container.stats(stream=False)
             # fill in the data
             data['pcpu'] = self._calculate_cpu_percent(stats)
             data['io_r'], data['io_w'] = self._calculate_blkio_bytes(stats)
@@ -107,11 +104,12 @@ class ContainerStatsJob(Job):
     def _calculate_network_bytes(self, stats):
         if 'networks' not in stats:
             return {}
-        net_stats = {iface: {'rx': 0.0, 'tx': 0.0} for iface in stats['networks'].keys()}
-        for iface, iface_stats in stats['networks'].items():
-            net_stats[iface]['rx'] += iface_stats['rx_bytes']
-            net_stats[iface]['tx'] += iface_stats['tx_bytes']
-        return net_stats
+        return {
+            iface: {
+                'rx': iface_stats['rx_bytes'],
+                'tx': iface_stats['tx_bytes']
+            } for iface, iface_stats in stats['networks'].items()
+        }
 
     def _calculate_mem_bytes(self, stats):
         mem_bytes = 0.0
