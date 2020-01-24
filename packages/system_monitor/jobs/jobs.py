@@ -33,3 +33,6 @@ class Job(object):
 
     def reset(self):
         pass
+
+    def __str__(self):
+        return type(self).__name__
