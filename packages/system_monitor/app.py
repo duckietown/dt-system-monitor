@@ -57,10 +57,11 @@ class SystemMonitor(DTProcess):
         # configure logger
         if self.args.debug:
             self.logger.setLevel(logging.DEBUG)
+            self.logger.debug('Running in Debug Mode!')
         # setup shutdown procedure
         self.register_shutdown_callback(self._clean_shutdown)
         # create workers pool
-        self.pool = Pool(WORKERS_NUM, self._exception_handler)
+        self.pool = Pool(self.logger, WORKERS_NUM, self._exception_handler)
         # print configuration
         print("""
 System-Monitor
@@ -107,15 +108,24 @@ Log ID: {key:s}
             # breath
             time.sleep(1.0 / APP_HEARTBEAT_HZ)
         self.logger.info('The monitor timed out. Clearing jobs...')
+        # drop all the jobs returned by the workers
+        self.pool.black_hole(True)
         # remove all jobs from the queue
         self.pool.terminate_all()
+        self.pool.join()
         self.logger.info('Jobs cleared')
+        # allow the pool to retain jobs
+        self.pool.black_hole(False)
         # send log to server
         if not self.is_shutdown() and JOB_PUSH_TO_SERVER:
             self.logger.info('Collecting logged data')
             self.pool.enqueue(PublisherJob(self, self.get_log_key(), self.get_log()))
             self.logger.info('Pushing data to the cloud')
+            # drop all the jobs returned by the workers
+            self.pool.black_hole(True)
+            # wait for the job to finish
             self.pool.join()
+            self.logger.info('Data transferred successfully!')
         # initiate shutdown (if nobody else requested it already)
         self.logger.info('Stopping workers...')
         if not self.is_shutdown():

@@ -9,13 +9,13 @@ from copy import copy
 from .constants import WORKER_HEARTBEAT_HZ
 
 
-
 class Worker(Thread):
     """Thread executing tasks from a given tasks queue"""
 
-    def __init__(self, name, pool, abort, idle):
+    def __init__(self, name, logger, pool, abort, idle):
         Thread.__init__(self)
         self.name = name
+        self.logger = logger
         self.pool = pool
         self.queue = pool.queue
         self.results = pool.results
@@ -37,6 +37,10 @@ class Worker(Thread):
                 if not job.is_executable():
                     if not job.is_terminated():
                         self.pool.enqueue(job)
+                    else:
+                        self.logger.debug(
+                            'Job [{:s}] was found terminated in the queue.'.format(str(job))
+                        )
                     self.queue.task_done()
                     time.sleep(1.0 / WORKER_HEARTBEAT_HZ)
                     continue
@@ -66,6 +70,10 @@ class Worker(Thread):
                     # reset job and put back in the queue
                     job.reset()
                     self.pool.enqueue(job)
+                else:
+                    self.logger.debug(
+                        'Job [{:s}] was found terminated in the queue.'.format(str(job))
+                    )
                 # task complete no matter what happened
                 self.queue.task_done()
 
@@ -73,7 +81,8 @@ class Worker(Thread):
 class Pool:
     """Pool of threads consuming tasks from a queue"""
 
-    def __init__(self, thread_count, exception_handler):
+    def __init__(self, logger, thread_count, exception_handler):
+        self.logger = logger
         self.queue = Queue()
         self.resultQueue = Queue()
         self.thread_count = thread_count
@@ -82,6 +91,7 @@ class Pool:
         self.aborts = []
         self.idles = []
         self.threads = []
+        self._black_hole = False
 
     """Tell my threads to quit"""
 
@@ -107,17 +117,26 @@ class Pool:
             idle = Event()
             self.aborts.append(abort)
             self.idles.append(idle)
-            self.threads.append(Worker('thread-%d' % n, self, abort, idle))
+            self.threads.append(Worker('thread-%d' % n, self.logger, self, abort, idle))
         return True
+
+    def black_hole(self, val):
+        self._black_hole = val
 
     """Add a task to the queue"""
 
     def enqueue(self, job):
+        if self._black_hole:
+            self.logger.debug(
+                'Job [{:s}] went down the black hole.'.format(str(job))
+            )
+            return
         self.queue.put(job)
 
     """Wait for completion of all the tasks in the queue"""
 
     def join(self):
+        self.logger.debug('Joining the pool with {:d} uncompleted jobs'.format(self.queue.qsize()))
         self.queue.join()
 
     """Remove all jobs that are in the queue and wait for those grabbed by the threads"""
@@ -126,8 +145,13 @@ class Pool:
         # clear the queue
         while not self.done():
             try:
-                self.queue.get(False)
+                job = self.queue.get(False)
                 self.queue.task_done()
+                self.logger.debug(
+                    'Job [{:s}] was found in the queue. Now terminated.'.format(
+                        str(job)
+                    )
+                )
             except:
                 pass
             time.sleep(0.1)
