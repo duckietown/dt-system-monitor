@@ -55,7 +55,7 @@ class SystemMonitor(DTProcess):
         self._log_size = sys.getsizeof(self._log)
         # ---
         # configure logger
-        if self.args.debug:
+        if self.args.debug or self.logger.getEffectiveLevel() == logging.DEBUG:
             self.logger.setLevel(logging.DEBUG)
             self.logger.debug('Running in Debug Mode!')
         # setup shutdown procedure

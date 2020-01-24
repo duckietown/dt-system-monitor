@@ -43,17 +43,10 @@ if [ -z ${LOG_API_APP_SECRET+x} ]; then
 #  exit 4;
 fi
 
-# DEBUG is optional
-if [ "${DEBUG}" = "1" ]; then
-  DEBUG_ARG='--debug';
-fi
-
-
 # launching app
 dt_exec python3 \
   -m system_monitor \
     --verbose \
-    ${DEBUG_ARG} \
     --type ${ROBOT_TYPE} \
     --app-id ${LOG_API_APP_ID} \
     --app-secret ${LOG_API_APP_SECRET} \
