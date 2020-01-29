@@ -43,6 +43,11 @@ if [ -z ${LOG_API_APP_SECRET+x} ]; then
 #  exit 4;
 fi
 
+# LOG_NOTES is optional
+if [ -z ${LOG_NOTES+x} ]; then
+  LOG_NOTES="(empty)";
+fi
+
 # launching app
 dt_exec python3 \
   -m system_monitor \
@@ -51,6 +56,7 @@ dt_exec python3 \
     --app-id ${LOG_API_APP_ID} \
     --app-secret ${LOG_API_APP_SECRET} \
     --group ${LOG_GROUP} \
+    --notes "${LOG_NOTES}" \
     --duration ${DURATION}
 
 # ----------------------------------------------------------------------------

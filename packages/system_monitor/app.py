@@ -49,7 +49,8 @@ class SystemMonitor(DTProcess):
                 'group': self.args.group,
                 'type': self.args.type.lower(),
                 'target': self.get_target_name(),
-                'duration': self.args.duration
+                'duration': self.args.duration,
+                'notes': self.args.notes
             }
         }
         self._log_size = sys.getsizeof(self._log)
@@ -74,6 +75,8 @@ Log Database: {database:s}
 Log Group: {group:s}
 Log duration: {duration:d} secs
 Log ID: {key:s}
+Log Notes:
+    "{notes}"
 -------------------------------------------
         """.format(
             **self.args.__dict__,

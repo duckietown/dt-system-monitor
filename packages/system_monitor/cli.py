@@ -40,6 +40,11 @@ def get_parser():
                         default=-1,
                         type=int,
                         help="Length of the analysis in seconds, (-1: indefinite)")
+    parser.add_argument('-m',
+                        '--notes',
+                        default='(empty)',
+                        type=str,
+                        help="Custom notes to attach to the log")
     parser.add_argument('--debug', action='store_true', default=False, help="Run in debug mode")
     parser.add_argument('-vv',
                         '--verbose',
