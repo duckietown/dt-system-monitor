@@ -52,6 +52,7 @@ LOG_API_URL = "{:s}://{:s}/web-api/{}/data/set/json".format(
 )
 LOG_API_DEFAULT_DATABASE = 'db_log_default'
 LOG_DEFAULT_GROUP = 'default'
+LOG_DEFAULT_SUBGROUP = 'default'
 LOG_API_RETRY_EVERY_S = 5
 LOG_API_RETRY_N_TIMES = 3
 LOG_API_REQUEST_TIMEOUT_S = 20

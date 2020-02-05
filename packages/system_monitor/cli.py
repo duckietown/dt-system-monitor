@@ -1,6 +1,10 @@
 import argparse
 
-from .constants import LOG_API_DEFAULT_DATABASE, LOG_DEFAULT_GROUP, DEFAULT_TARGET
+from .constants import \
+    LOG_API_DEFAULT_DATABASE,\
+    LOG_DEFAULT_SUBGROUP,\
+    LOG_DEFAULT_GROUP,\
+    DEFAULT_TARGET
 
 def get_parser():
     parser = argparse.ArgumentParser()
@@ -30,16 +34,22 @@ def get_parser():
                         default=LOG_DEFAULT_GROUP,
                         type=str,
                         help="Name of the logging group within the database")
+    parser.add_argument('-S',
+                        '--subgroup',
+                        default=LOG_DEFAULT_SUBGROUP,
+                        type=str,
+                        help="Name of the logging subgroup within the database")
     parser.add_argument('-F',
                         '--filter',
                         action='append',
-                        default=['.*'],
+                        default=[],
+                        nargs='*',
                         help="Specify regexes used to filter the monitored containers")
     parser.add_argument('-d',
                         '--duration',
-                        default=-1,
+                        required=True,
                         type=int,
-                        help="Length of the analysis in seconds, (-1: indefinite)")
+                        help="Length of the analysis in seconds")
     parser.add_argument('-m',
                         '--notes',
                         default='(empty)',

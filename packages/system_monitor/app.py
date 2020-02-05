@@ -73,6 +73,7 @@ Target Name: {target_name:s}
 Log Version: {log_version:s}
 Log Database: {database:s}
 Log Group: {group:s}
+Log SubGroup: {subgroup:s}
 Log duration: {duration:d} secs
 Log ID: {key:s}
 Log Notes:
@@ -192,7 +193,7 @@ Log Notes:
         return 'v{}__{}__{}__{}__{:d}'.format(
             LOG_VERSION,
             self.args.group,
-            self.args.type.lower(),
+            self.args.subgroup,
             self.get_target_name(),
             int(self._start_time)
         )
