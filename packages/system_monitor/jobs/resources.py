@@ -15,6 +15,7 @@ class DeviceResourcesJob(Job):
     def run(self):
         try:
             mem_stats = psutil.virtual_memory()
+            swap_stats = psutil.swap_memory()
             # get system resources status
             data = {
                 'time': time.time(),
@@ -23,6 +24,12 @@ class DeviceResourcesJob(Job):
                     'total': mem_stats.total,
                     'used': mem_stats.used,
                     'free': mem_stats.available
+                },
+                'swap': {
+                    'pswap': swap_stats.percent,
+                    'total': swap_stats.total,
+                    'used': swap_stats.used,
+                    'free': swap_stats.free
                 },
                 'cpu': {
                     'pcpu': psutil.cpu_percent()

@@ -16,7 +16,7 @@ _LAUNCH_ARGS=()
 
 # default timeout value is 10 minutes
 if [ -z ${DURATION+x} ]; then
-  _LAUNCH_ARGS+=(--duration 600);
+  _LAUNCH_ARGS+=(--duration 600)
 fi
 
 # launching app
