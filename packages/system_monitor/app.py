@@ -214,7 +214,7 @@ def _base_url(args):
         return args.target
     else:
         hostname, port, *_ = (args.target + ':' + str(DEFAULT_DOCKER_TCP_PORT)).split(':')
-        return 'tcp://{:s}:{:d}'.format(args.target, port)
+        return 'tcp://{:s}:{:s}'.format(args.target, port)
 
 
 def _sizeof_fmt(num, suffix='B'):
