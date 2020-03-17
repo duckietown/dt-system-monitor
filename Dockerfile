@@ -4,7 +4,7 @@ ARG REPO_NAME="dt-system-monitor"
 # ==================================================>
 # ==> Do not change this code
 ARG ARCH=arm32v7
-ARG MAJOR=ente
+ARG MAJOR=daffy
 ARG BASE_TAG=${MAJOR}-${ARCH}
 ARG BASE_IMAGE=dt-commons
 
