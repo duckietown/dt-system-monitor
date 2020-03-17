@@ -213,7 +213,7 @@ def _base_url(args):
     if args.target.startswith('unix:'):
         return args.target
     else:
-        hostname, port, *_ = (args.target + ':' + DEFAULT_DOCKER_TCP_PORT).split(':')
+        hostname, port, *_ = (args.target + ':' + str(DEFAULT_DOCKER_TCP_PORT)).split(':')
         return 'tcp://{:s}:{:d}'.format(args.target, port)
 
 
