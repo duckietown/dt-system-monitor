@@ -1,4 +1,4 @@
-# Template: template-basic
+# Template: template-basic 
 
 This template provides a boilerplate repository for developing non-ROS software
 in Duckietown.
