@@ -80,10 +80,10 @@ Log Notes:
     "{notes}"
 -------------------------------------------
         """.format(
-            **self.args.__dict__,
             key=self.get_log_key(),
             target_name=self.get_target_name(),
-            log_version=str(LOG_VERSION)
+            log_version=str(LOG_VERSION),
+            **self.args.__dict__
         ))
 
     def start(self):
