@@ -2,6 +2,7 @@ import sys
 from .app import SystemMonitor
 from .constants import APP_NAME
 from .cli import get_parser
+from . import __version__
 
 
 def main():
