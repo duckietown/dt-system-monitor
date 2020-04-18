@@ -47,6 +47,7 @@ class SystemMonitor(DTProcess):
                 'time_iso': self._start_time_iso,
                 'version': LOG_VERSION,
                 'group': self.args.group,
+                'subgroup': self.args.subgroup,
                 'type': self.args.type.lower(),
                 'target': self.get_target_name(),
                 'duration': self.args.duration,
