@@ -162,7 +162,6 @@ Log Notes:
         # release lock
         self._lock.release()
 
-
     def is_done(self):
         return 0 < self.args.duration < self.uptime()
 
@@ -177,7 +176,7 @@ Log Notes:
             AppStatus.TERMINATING: 'stop',
             AppStatus.KILLING: 'kill',
             AppStatus.DONE: 'done'
-        }[self.status()]
+        }[self.status]
         stats['log_size'] = _sizeof_fmt(self._log_size)
         return stats
 

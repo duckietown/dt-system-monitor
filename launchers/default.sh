@@ -3,14 +3,14 @@
 source /environment.sh
 
 # initialize launch file
-dt_launchfile_init
+dt-launchfile-init
 
 # YOUR CODE BELOW THIS LINE
 # ----------------------------------------------------------------------------
 
 
-# NOTE: Use the variable CODE_DIR to know the absolute path to your code
-# NOTE: Use `dt_exec COMMAND` to run the main process (blocking process)
+# NOTE: Use the variable REPO_PATH to know the absolute path to your code
+# NOTE: Use `dt-exec COMMAND` to run the main process (blocking process)
 
 _LAUNCH_ARGS=()
 
@@ -20,14 +20,15 @@ if [ -z ${DURATION+x} ]; then
 fi
 
 # launching app
-dt_exec python3 \
+dt-exec python3 \
   -m system_monitor \
     --verbose \
     "${_LAUNCH_ARGS[@]}" \
     "$@"
 
+
 # ----------------------------------------------------------------------------
 # YOUR CODE ABOVE THIS LINE
 
-# terminate launch file
-dt_launchfile_terminate
+# wait for app to end
+dt-launchfile-join
