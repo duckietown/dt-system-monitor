@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import copy
@@ -42,6 +43,10 @@ class SystemMonitor(DTProcess):
         self._start_time = time.time()
         self._start_time_iso = _iso_now()
         self._lock = threading.Semaphore(1)
+        # parse notes
+        if os.environ.get('LOG_NOTES', None) is not None:
+            self.args.notes = os.environ.get('LOG_NOTES')
+        # ---
         self._log: Dict[str, Union[dict, list]] = {
             'general': {
                 'time': self._start_time,
