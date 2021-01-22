@@ -6,6 +6,7 @@ from .constants import \
     LOG_DEFAULT_GROUP,\
     DEFAULT_TARGET
 
+
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--type',
@@ -50,6 +51,10 @@ def get_parser():
                         required=True,
                         type=int,
                         help="Length of the analysis in seconds")
+    parser.add_argument('--system',
+                        default=False,
+                        action='store_true',
+                        help="Log system processes as well")
     parser.add_argument('-m',
                         '--notes',
                         default='(empty)',

@@ -14,11 +14,13 @@ from dt_class_utils import AppStatus
 from typing import Iterable, Union, Dict
 
 from .pool import Pool
-from .jobs import PrinterJob,\
-    ContainerListJob,\
-    DeviceHealthJob,\
-    PublisherJob,\
-    EndpointInfoJob
+from .jobs import \
+    PrinterJob, \
+    ContainerListJob, \
+    DeviceHealthJob, \
+    PublisherJob, \
+    EndpointInfoJob, \
+    SystemProcessStatsJob
 from .constants import \
     APP_NAME, \
     WORKERS_NUM, \
@@ -28,6 +30,7 @@ from .constants import \
     JOB_FETCH_DEVICE_HEALTH, \
     JOB_PUSH_TO_SERVER, \
     JOB_FETCH_ENDPOINT_INFO, \
+    JOB_FETCH_SYSTEM_PROCESSES_STATS, \
     LOG_VERSION
 
 
@@ -49,6 +52,7 @@ class SystemMonitor(DTProcess):
                 'type': self.args.type.lower(),
                 'target': self.get_target_name(),
                 'duration': self.args.duration,
+                'system': self.args.system,
                 'notes': self.args.notes
             }
         }
@@ -90,6 +94,9 @@ Log Notes:
         # add printer job (if needed)
         if self.args.verbose:
             self.pool.enqueue(PrinterJob(self))
+        # create system process stats job
+        if JOB_FETCH_SYSTEM_PROCESSES_STATS and self.args.system:
+            self.pool.enqueue(SystemProcessStatsJob(self))
         # initialize docker client
         client = docker.DockerClient(base_url=_base_url(self.args))
         # create endpoint info job
