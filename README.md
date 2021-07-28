@@ -24,7 +24,7 @@ a template for your new repository.
 ### 3. Define dependencies
 
 List the dependencies in the files `dependencies-apt.txt` and
-`dependencies-py.txt` (apt packages and pip packages respectively).
+`dependencies-py3.txt` (apt packages and pip packages respectively).
 
 
 ### 4. Place your code
@@ -38,5 +38,5 @@ your new repository.
 ### 5. Setup the launchfile
 
 Change the file `launch.sh` in your repository to
-launch your code. Use the provided variable `CODE_DIR`
+launch your code. Use the provided variable `DT_REPO_PATH`
 to identify the place where your code will be placed.

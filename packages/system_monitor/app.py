@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import copy
@@ -14,12 +15,13 @@ from dt_class_utils import AppStatus
 from typing import Iterable, Union, Dict
 
 from .pool import Pool
-from .jobs import PrinterJob,\
-    ContainerListJob,\
-    DeviceHealthJob,\
-    PublisherJob,\
-    EndpointInfoJob,\
-    DeviceResourcesJob
+from .jobs import \
+    PrinterJob, \
+    ContainerListJob, \
+    DeviceHealthJob, \
+    PublisherJob, \
+    EndpointInfoJob, \
+    SystemProcessStatsJob
 from .constants import \
     APP_NAME, \
     WORKERS_NUM, \
@@ -27,9 +29,9 @@ from .constants import \
     DEFAULT_DOCKER_TCP_PORT, \
     JOB_FETCH_CONTAINER_LIST, \
     JOB_FETCH_DEVICE_HEALTH, \
-    JOB_FETCH_DEVICE_RESOURCES_STATS, \
     JOB_PUSH_TO_SERVER, \
     JOB_FETCH_ENDPOINT_INFO, \
+    JOB_FETCH_SYSTEM_PROCESSES_STATS, \
     LOG_VERSION
 
 
@@ -41,7 +43,11 @@ class SystemMonitor(DTProcess):
         self._start_time = time.time()
         self._start_time_iso = _iso_now()
         self._lock = threading.Semaphore(1)
-        self._log = {
+        # parse notes
+        if os.environ.get('LOG_NOTES', None) is not None:
+            self.args.notes = os.environ.get('LOG_NOTES')
+        # ---
+        self._log: Dict[str, Union[dict, list]] = {
             'general': {
                 'time': self._start_time,
                 'time_iso': self._start_time_iso,
@@ -51,6 +57,7 @@ class SystemMonitor(DTProcess):
                 'type': self.args.type.lower(),
                 'target': self.get_target_name(),
                 'duration': self.args.duration,
+                'system': self.args.system,
                 'notes': self.args.notes
             }
         }
@@ -84,7 +91,7 @@ Log Notes:
             **self.args.__dict__,
             key=self.get_log_key(),
             target_name=self.get_target_name(),
-            log_version=str(LOG_VERSION)
+            log_version=LOG_VERSION
         ))
 
     def start(self):
@@ -92,6 +99,9 @@ Log Notes:
         # add printer job (if needed)
         if self.args.verbose:
             self.pool.enqueue(PrinterJob(self))
+        # create system process stats job
+        if JOB_FETCH_SYSTEM_PROCESSES_STATS and self.args.system:
+            self.pool.enqueue(SystemProcessStatsJob(self))
         # initialize docker client
         client = docker.DockerClient(base_url=_base_url(self.args))
         # create endpoint info job
@@ -103,9 +113,6 @@ Log Notes:
         # create device health job
         if JOB_FETCH_DEVICE_HEALTH:
             self.pool.enqueue(DeviceHealthJob(self, self.args.target))
-        # create device resources stats job
-        if JOB_FETCH_DEVICE_RESOURCES_STATS:
-            self.pool.enqueue(DeviceResourcesJob(self))
         # start pool
         self.pool.run()
         # spin the app
@@ -191,7 +198,7 @@ Log Notes:
 
     def get_log_key(self):
         return 'v{}__{}__{}__{}__{:d}'.format(
-            LOG_VERSION,
+            LOG_VERSION.replace('.', '_'),
             self.args.group,
             self.args.subgroup,
             self.get_target_name(),
