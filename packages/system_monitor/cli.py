@@ -60,11 +60,14 @@ def get_parser():
                         default='(empty)',
                         type=str,
                         help="Custom notes to attach to the log")
-    parser.add_argument('--debug', action='store_true', default=False, help="Run in debug mode")
+    parser.add_argument('--debug', action='store_true',
+                        default=False, help="Run in debug mode")
     parser.add_argument('-vv',
                         '--verbose',
                         dest='verbose',
                         action='store_true',
                         default=False,
                         help="Run in verbose mode")
+    parser.add_argument("--no-upload", dest="no_upload", action="store_true",
+                        default=False, help="Do not upload the statistics to the Duckietown server.")
     return parser

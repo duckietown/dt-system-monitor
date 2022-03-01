@@ -40,6 +40,9 @@ class SystemMonitor(DTProcess):
     def __init__(self, args):
         super(SystemMonitor, self).__init__(APP_NAME)
         self.args = args
+        print("ARGS:")
+        print(self.args)
+        print("===================")
         self._start_time = time.time()
         self._start_time_iso = _iso_now()
         self._lock = threading.Semaphore(1)
@@ -58,7 +61,8 @@ class SystemMonitor(DTProcess):
                 'target': self.get_target_name(),
                 'duration': self.args.duration,
                 'system': self.args.system,
-                'notes': self.args.notes
+                'notes': self.args.notes,
+                'no_upload': self.args.no_upload
             }
         }
         self._log_size = sys.getsizeof(self._log)
@@ -131,7 +135,8 @@ Log Notes:
         # send log to server
         if not self.is_shutdown() and JOB_PUSH_TO_SERVER:
             self.logger.info('Collecting logged data')
-            self.pool.enqueue(PublisherJob(self, self.get_log_key(), self.get_log()))
+            self.pool.enqueue(PublisherJob(
+                self, self.get_log_key(), self.get_log(), self.args.no_upload))
             self.logger.info('Pushing data to the cloud')
             # drop all the jobs returned by the workers
             self.pool.black_hole(True)
@@ -206,21 +211,24 @@ Log Notes:
         )
 
     def get_target_name(self):
-        target = socket.gethostname() if self.args.target.startswith('unix:') else self.args.target
+        target = socket.gethostname() if self.args.target.startswith(
+            'unix:') else self.args.target
         target, *_ = target.split(':')
         target = target.rstrip('.local')
         return target.lower()
 
     def _exception_handler(self, exception_type, exception, tback):
         self.pool.stats.increase('tasks_failed')
-        traceback.print_exception(exception_type, exception, tback, file=sys.stderr)
+        traceback.print_exception(
+            exception_type, exception, tback, file=sys.stderr)
 
 
 def _base_url(args):
     if args.target.startswith('unix:'):
         return args.target
     else:
-        hostname, port, *_ = (args.target + ':' + str(DEFAULT_DOCKER_TCP_PORT)).split(':')
+        hostname, port, *_ = (args.target + ':' +
+                              str(DEFAULT_DOCKER_TCP_PORT)).split(':')
         return 'tcp://{:s}:{:s}'.format(args.target, port)
 
 
