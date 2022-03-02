@@ -40,9 +40,6 @@ class SystemMonitor(DTProcess):
     def __init__(self, args):
         super(SystemMonitor, self).__init__(APP_NAME)
         self.args = args
-        print("ARGS:")
-        print(self.args)
-        print("===================")
         self._start_time = time.time()
         self._start_time_iso = _iso_now()
         self._lock = threading.Semaphore(1)
