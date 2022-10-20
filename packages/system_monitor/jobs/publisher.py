@@ -1,6 +1,7 @@
 import sys
 import json
 import requests
+import os
 
 from typing import Dict
 
@@ -14,22 +15,31 @@ from system_monitor.constants import \
 
 class PublisherJob(Job):
 
-    def __init__(self, app: 'SystemMonitor', log_key: str, log: Dict):
+    def __init__(self, app: 'SystemMonitor', log_key: str, log: Dict, no_upload: bool):
         super().__init__(period=LOG_API_RETRY_EVERY_S)
         self._app = app
         self._log_key = log_key
         self._data = log
         self._trial = 0
+        self._no_upload = no_upload
+        self._file_path = os.path.join("/tmp", log_key+".json")
 
     def run(self):
         if self._trial >= LOG_API_RETRY_N_TIMES:
-            msg = 'We tried pushing the log to the cloud {} times. Giving up.'.format(self._trial)
+            msg = 'We tried pushing the log to the cloud {} times. Giving up.'.format(
+                self._trial)
             self._app.logger.info(msg)
             self.terminate()
             return
         self._app.logger.info('Pushing to the server [trial {:d}/{:d}]...'.format(
             self._trial+1, LOG_API_RETRY_N_TIMES
         ))
+        if self._no_upload:
+            with open(self._file_path, "w") as write_file:
+                json.dump(self._data, write_file)
+            self._app.logger.info(f"Data stored in {self._file_path}.")
+            return
+
         try:
             # create request body
             data = {
@@ -46,7 +56,9 @@ class PublisherJob(Job):
                 timeout=LOG_API_REQUEST_TIMEOUT_S
             )
             # print(json.dumps(data, indent=4))
-            server_msg = lambda r: 'The server says: [{}] {}'.format(r['code'], r['message'] or r['status'])
+
+            def server_msg(r): return 'The server says: [{}] {}'.format(
+                r['code'], r['message'] or r['status'])
             # try to interpret the error message from the server
             try:
                 data = r.json()
@@ -65,4 +77,3 @@ class PublisherJob(Job):
             # traceback.print_exception(ex_type, ex, tb, file=sys.stderr)
         finally:
             self._trial += 1
-

@@ -13,6 +13,7 @@ def main():
         print('{} version {}\n'.format(APP_NAME, __version__))
         exit(0)
     # ---
+    
     # parse arguments
     parsed = parser.parse_args()
     # create app and spin it
