@@ -1,0 +1,8 @@
+name: "dt-system-monitor"
+maintainer:
+    name: "Andrea F. Daniele"
+    email: "afdaniele@duckietown.com"
+description: "Provides tools for generating a diagnostics report on the status of a system"
+version: 4.0.1
+# pick an icon from: https://fontawesome.com/v4.7.0/icons/
+icon: stethoscope
