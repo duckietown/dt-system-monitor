@@ -130,7 +130,7 @@ Log Notes:
         # allow the pool to retain jobs
         self.pool.black_hole(False)
         # send log to server
-        if not self.is_shutdown() and JOB_PUSH_TO_SERVER:
+        if not self.is_shutdown and JOB_PUSH_TO_SERVER:
             self.logger.info('Collecting logged data')
             self.pool.enqueue(PublisherJob(
                 self, self.get_log_key(), self.get_log(), self.args.no_upload))
@@ -142,7 +142,7 @@ Log Notes:
             self.logger.info('Data transferred successfully!')
         # initiate shutdown (if nobody else requested it already)
         self.logger.info('Stopping workers...')
-        if not self.is_shutdown():
+        if not self.is_shutdown:
             self.shutdown()
         self.pool.abort()
         self.logger.info('Workers stopped!')
